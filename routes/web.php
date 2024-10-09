@@ -59,7 +59,54 @@ Route::delete('customers/{customer}/forceDestroy', [CustomerController::class, '
 //     die;
 // })->name('login');
 
+// Buổi 5 session
 
+Route::get('session', function () {
+    // session()->put('ahihi', 'xxxxxx');
+
+    // session()->put('ahihi', [
+    //     'name' => 'kkkkk',
+    //     'email' => 'kkkk@gmail.com',
+    // ]);
+
+    // session()->put('orders', []);
+
+    // session()->put('orders.101', [
+    //     'name' => 'Sản phẩm 1',
+    //     'price' => 50000
+    // ]);
+
+
+    // session(['orders.102' => ['name' => 'Sản phẩm 1', 'price' => 50000]]);
+
+
+    // [
+    //     101 => [
+    //         'name' => 'Sản phẩm 1',
+    //         'price' => 50000
+    //     ]
+    //     ,
+    //     102 => [
+    //         'name' => 'Sản phẩm 1',
+    //         'price' => 2222
+    //     ]
+    // ]
+
+
+    // return session()->get('ahihi', '789');
+
+    // session()->forget('ahihi');
+
+    // session()->regenerate();
+
+    // session()->invalidate();
+
+    // session()->flash('keke', 'OK luôn');
+
+    // echo session('keke');
+
+    return session()->all();
+});
 
 
 
