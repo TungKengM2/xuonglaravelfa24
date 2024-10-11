@@ -10,6 +10,7 @@ use App\Http\Controllers\MovieController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TransactionController;
 use App\Http\Middleware\FlagMiddleware;
 use App\Models\Flight;
 use App\Models\OrderItem;
@@ -22,7 +23,10 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 
 /*
 |--------------------------------------------------------------------------
@@ -475,8 +479,62 @@ Route::middleware(['kiemtraadmin:khachhang'])->group(function () {
 });
 
 // Bài 3 em chưa làm được
+Route::get('/register1', function () {
+    return view('login.register');
+});
+
+Route::post('/register1', function (Request $request) {
+    $request->validate([
+        'email' => 'required|email|unique:users',
+        'password' => 'required|confirmed',
+    ]);
+
+    User::create([
+        'email' => $request->email,
+        'password' => Hash::make($request->password),
+    ]);
+
+    return redirect('/login1')->with('success', 'Tạo tài khoản thành công, vui lòng đăng nhập.');
+});
+
+Route::get('/login1', function () {
+    return view('login.login');
+});
+
+Route::post('/login1', function (Request $request) {
+    $credentials = $request->only('email', 'password');
+    $remember = $request->has('remember');
+
+    if (Auth::attempt($credentials, $remember)) {
+        return redirect()->intended('/dashboard');
+    }
+
+    return back()->withErrors([
+        'email' => 'Thông tin đăng nhập không chính xác.',
+    ]);
+});
 
 
+Route::get('forgot-password1', function () {
+    return view('login.forgot-password');
+})->middleware('guest')->name('password.request');
+
+Route::post('forgot-password1', function (Request $request) {
+    $request->validate(['email' => 'required|email']);
+
+    $status = Password::sendResetLink(
+        $request->only('email')
+    );
+
+    return $status === Password::RESET_LINK_SENT
+        ? back()->with(['status' => __($status)])
+        : back()->withErrors(['email' => __($status)]);
+})->middleware('guest')->name('password.email');
+
+
+Route::get('/dashboard1', function () {
+    return 'Chào mừng bạn đã đăng nhập thành công!';
+})->middleware('auth');
 
 // Buổi 5 session
 
@@ -557,6 +615,15 @@ Route::get('/users', function () {
 //     dd($post->comments->toArray());
 // });
 
+
+Route::get('/transaction/start', [TransactionController::class, 'startTransaction'])->name('transaction.start');
+Route::post('/transaction/process', [TransactionController::class, 'processTransaction'])->name('transaction.process');
+Route::post('/transaction/complete', [TransactionController::class, 'completeTransaction'])->name('transaction.complete');
+Route::post('/transaction/cancel', [TransactionController::class, 'cancelTransaction'])->name('transaction.cancel');
+Route::post('/transaction/resume', [TransactionController::class, 'resumeTransaction'])->name('transaction.resume');
+
+
+
 Route::get('/posts/{id}', function ($id) {
     $post = Post1::with('comments')->find($id);
 
@@ -595,6 +662,11 @@ Route::get('/users/{id}/sync-role', function ($id) {
 
     dd($user->load('roles')->toArray());
 });
+
+
+
+
+
 
 
 // BÀI LÀM ASM
