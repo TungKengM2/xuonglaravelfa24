@@ -3,13 +3,18 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminPostController;
 use App\Http\Controllers\CategoryPostController;
+use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\Financial_ReportController;
 use App\Http\Controllers\MovieController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PassportController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\StudentController;
+use App\Http\Controllers\StudentSubjectController;
+use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Middleware\FlagMiddleware;
 use App\Models\Flight;
@@ -664,7 +669,13 @@ Route::get('/users/{id}/sync-role', function ($id) {
 });
 
 
+// Bài buổi 6
 
+Route::resource('students', StudentController::class);
+Route::resource('classrooms', ClassroomController::class);
+Route::resource('subjects', SubjectController::class);
+Route::resource('passports', PassportController::class);
+Route::resource('students_subjects', StudentSubjectController::class);
 
 
 
